@@ -1,5 +1,3 @@
-
-
 const Plugin = {
     install(Vue, options = {}) {
         // adding an instance method
@@ -27,16 +25,16 @@ function addToErrorBag(errorResponse) {
     // check if errors exist
     if (!hasProperty(errorResponse.data, 'errors')) return null;
 
-    return loopThroughErrors(errorResponse.data.errors);
+    return loopThroughErrors.call(this, errorResponse.data.errors);
 }
 
-function hasProperty(obj, key) {
+const hasProperty = (obj, key) => {
     if (!obj) return false;
 
     const has = Object.prototype.hasOwnProperty;
 
     return has.call(obj, key);
-}
+};
 
 function loopThroughErrors(errors) {
     let firstError = '';
