@@ -56,10 +56,12 @@ In Vue classes:
                 axios.post('/example', data)
                     .then(res => {})
                     .catch(err => {
-                        //adds errors to vee-validate errorBag and returns the first error string
-                        let firstError = this.$addLaravelErrors(err.response);
+                        //adds errors to vee-validate errorBag and returns the errors as object
+                        const errors = this.$addLaravelErrors(err.response);
 
-                        alert(firstError); //it's a string or null
+                        if(errors){
+                            alert(errors[Object.keys(errors)[0]]); 
+                        }
                     });
             }
         }

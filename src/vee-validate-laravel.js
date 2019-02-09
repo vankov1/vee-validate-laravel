@@ -10,7 +10,7 @@ const Plugin = {
  *
  * @param   {obj}  errorResponse  [axios error.response]
  *
- * @return  {?string}                 [returns the first error message]
+ * @return  {?obj}                 [returns the all errors with keys]
  */
 function addToErrorBag(errorResponse) {
     // only allow this function to be run if the validator exists
@@ -25,7 +25,7 @@ function addToErrorBag(errorResponse) {
     // check if errors exist
     if (!hasProperty(errorResponse.data, 'errors')) return null;
 
-    return loopThroughErrors.call(this, errorResponse.data.errors);
+    return loopThroughErrors.call(this, errorResponse.data);
 }
 
 const hasProperty = (obj, key) => {
@@ -36,20 +36,28 @@ const hasProperty = (obj, key) => {
     return has.call(obj, key);
 };
 
-function loopThroughErrors(errors) {
-    let firstError = '';
+function loopThroughErrors(data) {
+    if (!data) {
+        return null;
+    }
 
-    Object.keys(errors).forEach((field) => {
-        this.$validator.errors.add({
-            field,
-            msg: errors[field].join(', '),
+    // Attempt to parse Laravel-structured validation errors.
+    try {
+        const messages = {};
+
+        Object.keys(data.errors).forEach((key) => {
+            messages[key] = data.errors[key].join(', ');
+
+            this.$validator.errors.add({
+                field,
+                msg: messages[key],
+            });
         });
 
-        // add the first error
-        if (!firstError) firstError = errors[field].join(', ');
-    });
-
-    return firstError;
+        return messages;
+    } catch (e) {
+        return data;
+    }
 }
 
 
