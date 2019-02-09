@@ -16,27 +16,27 @@ const Plugin = {
  */
 function addToErrorBag(errorResponse) {
     // only allow this function to be run if the validator exists
-    if (!exists(this, '$validator')) return null;
+    if (!hasProperty(this, '$validator')) return null;
 
     // check if there is data in the response
-    if (!exists(errorResponse, 'data')) return null;
+    if (!hasProperty(errorResponse, 'data')) return null;
 
     // clear errors
     this.$validator.errors.clear();
 
     // check if errors exist
-    if (!exists(errorResponse.data, 'errors')) return null;
+    if (!hasProperty(errorResponse.data, 'errors')) return null;
 
     return loopThroughErrors(errorResponse.data.errors);
 }
 
-exists = (obj, key) => {
+function hasProperty(obj, key) {
     if (!obj) return false;
 
     const has = Object.prototype.hasOwnProperty;
 
     return has.call(obj, key);
-};
+}
 
 function loopThroughErrors(errors) {
     let firstError = '';
