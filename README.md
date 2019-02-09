@@ -8,7 +8,7 @@ In your script entry point:
 ```javascript
 import Vue from 'vue';
 import VeeValidate from 'vee-validate';
-import VeeValidateLaravel from 'vee-validate-laravel';
+import VeeValidateLaravel from '@pmochine/vee-validate-laravel';
 
 Vue.use(VeeValidate);
 Vue.use(VeeValidateLaravel);
@@ -53,10 +53,14 @@ In Vue classes:
                     name: this.name
                 };
             
-                axios.post('/example', data).then(res => {
-                }).catch(err => {
-                    this.$setLaravelValidationErrorsFromResponse(err.response.data);
-                });
+                axios.post('/example', data)
+                    .then(res => {})
+                    .catch(err => {
+                        //adds errors to vee-validate errorBag and returns the first error string
+                        let firstError = this.$addLaravelErrors(err.response);
+
+                        alert(firstError); //it's a string or null
+                    });
             }
         }
     }
